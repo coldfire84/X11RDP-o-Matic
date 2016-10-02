@@ -279,7 +279,19 @@ case "$1" in
     ;;
     --withjpeg)
       CONFIGUREFLAGS+=(--enable-jpeg)
-      REQUIREDPACKAGES+=(libjpeg8-dev)
+      if [ -f /etc/debian_version ]; then
+    	VER=$(cat /etc/debian_version)
+	if [[ $VER == *"8."* ]]
+	then
+	  echo "Debian 8.x release detected, supplementing libjpeg8-dev with libjpeg62-turbo-dev"
+      	  REQUIREDPACKAGES+=(libjpeg62-turbo-dev)
+	else
+	  echo "Debian **non** 8.x release detected, using libjpeg8-dev"
+	  REQUIREDPACKAGES+=(libjpeg8-dev)
+	fi
+      else
+	REQUIREDPACKAGES+=(libjpeg8-dev)
+      fi
     ;;
     --withturbojpeg)
       CONFIGUREFLAGS+=(--enable-tjpeg)
